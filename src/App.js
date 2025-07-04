@@ -1,4 +1,5 @@
 import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import LoginPage from "./LoginPage";
 import Header from "./Header.js";
@@ -6,7 +7,8 @@ import Footer from "./Footer.js";
 import HomePage from "./HomePage.js";
 import Shop from "./Shop.js";
 import AddMerchPage from "./AddMerchPage.js";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Cart from "./Cart.js";
+
 
 function App() {
   const requireLogin = false;
@@ -43,6 +45,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+                path="/cart"
+                element={
+                  <ProtectedRoute>
+                    <Cart />
+                  </ProtectedRoute>
+                }
+    />
     </>
   ) : (
     // --- Login protection OFF ---
@@ -51,6 +61,7 @@ function App() {
       <Route path="/HomePage" element={<HomePage />} />
       <Route path="/Shop" element={<Shop />} />
       <Route path="/AddMerchPage" element={<AddMerchPage />} />
+      <Route path="/cart" element={<Cart />} />
     </>
   )}
 </Routes>
