@@ -6,6 +6,7 @@ function AddMerchPage() {
   return (
     <div>
         <div>
+        <Header />
         <AddMerchBox />
       </div>
     </div>
