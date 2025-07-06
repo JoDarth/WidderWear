@@ -4,30 +4,50 @@ function Shop() {
   const [item, setItem] = useState(null);
   const [cart, setCart] = useState([]);
   const [selectedSize, setSelectedSize] = useState("");
-  
-  // Load item and cart from localStorage on mount
+
   useEffect(() => {
-    const shopItem = localStorage.getItem("shopItem");
-    if (shopItem) {
-      const parsedItem = JSON.parse(shopItem);
-      setItem(parsedItem);
-      // Set default selected size if sizes exist
-      if (parsedItem.hasSizes && parsedItem.sizes && parsedItem.sizes.length > 0) {
-        setSelectedSize(parsedItem.sizes[0]);
+    async function fetchInventory() {
+      try {
+        const res = await fetch("https://sheetdb.io/api/v1/x9ga5hsszcw61");
+        const data = await res.json();
+        if (data.length > 0) {
+          const product = data[0];
+          let sizesArray = [];
+          if (product.hasSizes && product.sizes) {
+            sizesArray = product.sizes.split(",").map(s => s.trim());
+          }
+          setItem({
+            ...product,
+            hasSizes: product.hasSizes === "TRUE" || product.hasSizes === true,
+            sizes: sizesArray,
+            price: parseFloat(product.price),
+            inventory: parseInt(product.inventory, 10),
+          });
+          if (sizesArray.length > 0) {
+            setSelectedSize(sizesArray[0]);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch inventory:", err);
       }
     }
+
+    fetchInventory();
+
     const savedCart = localStorage.getItem("cart");
     if (savedCart) setCart(JSON.parse(savedCart));
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // Handle Add to Cart
   const handleAddToCart = () => {
     if (!item) return;
+    if (item.inventory <= 0) {
+      alert("Out of stock!");
+      return;
+    }
     const cartItem = {
       name: item.name,
       price: parseFloat(item.price),
@@ -58,6 +78,9 @@ function Shop() {
             <p className="card-text">
               <strong>Price:</strong> ${parseFloat(item.price).toFixed(2)}
             </p>
+            <p className="card-text">
+              <strong>In Stock:</strong> {item.inventory}
+            </p>
             {item.hasSizes && item.sizes && item.sizes.length > 0 && (
               <div className="mb-2">
                 <label htmlFor="shop-size-select" className="form-label">
@@ -81,13 +104,13 @@ function Shop() {
             <button
               className="btn btn-warning w-100 mt-3"
               onClick={handleAddToCart}
+              disabled={item.inventory <= 0}
             >
-              Add to Cart
+              {item.inventory <= 0 ? "Out of Stock" : "Add to Cart"}
             </button>
           </div>
         </div>
       )}
-      {/* (Optional) Show cart contents for debugging */}
       {cart.length > 0 && (
         <div className="mt-4">
           <h5>Cart:</h5>
