@@ -31,6 +31,9 @@ jobs:
       - name: List build folder contents (after build)
         run: dir build
 
+      - name: Remove previous build.zip if it exists
+        run: if (Test-Path build.zip) { Remove-Item build.zip }
+
       - name: Zip build folder
         run: powershell Compress-Archive -Path build\* -DestinationPath build.zip
 
