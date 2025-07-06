@@ -4,7 +4,7 @@ function HomePage() {
   return (
     <div>
       <h1>Goodbye fro m THE HomePage!</h1>
-      <h1>Goodriddance! fuck this from HomePage!</h1>
+      <h1>Goodriddance!fuck this from HomePage!</h1>
     </div>
   );
 }
