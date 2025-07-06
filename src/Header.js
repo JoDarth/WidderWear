@@ -38,7 +38,7 @@ function Header() {
           <img
             src={logo}
             alt="Widder Wear Logo"
-            style={{ maxHeight: "200px", width: "auto" }}
+            style={{ maxHeight: "auto", width: "auto" }}
           />
         </div>
         <div className="col-2 text-center">
